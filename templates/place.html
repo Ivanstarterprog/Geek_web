@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center;" class="col-md6 border rounded">
+    <h2>{{item.name}}</h2>
+    <h3>Данное место находится по адресу : {{item.adress}}</h3>
+    {% if item.content != None %}
+     <div style="font-size: 150%">
+        <p>{{item.content}}</p>
+    </div>
+    {% endif %}
+    {% if item.photo != 'none' %}
+    <div>
+        <img src="../../static/img/places_photos/{{item.photo}}">
+    </div>
+    {% endif %}
+    {% if item.changed %}
+    <div>
+        Пост был изменён
+    </div>
+    {% endif %}
+    <div>
+        Автор - <a href="../../user/{{item.user.id}}">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
+    </div>
+    {% if current_user.is_authenticated and current_user == item.user %}
+    <div>
+        <a href="/places/edit/{{ item.id }}" class="btn btn-warning">
+            Изменить
+        </a>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user == item.user or current_user.admin%}
+        <a href="/places_delete/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
+       {% if current_user.is_authenticated %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.content.label }}<br>
+            {{ form.content(class="form-control") }}<br>
+            {% for error in form.content.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.photo.label }}<br>
+            {{ form.photo(class="form-control") }}<br>
+            {% for error in form.photo.errors %}
+                <p content="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        {{message}}
+        </form>
+    {% endif %}
+    <p>Комментарии</p>
+    {% for item in coms%}
+<div style="text-align: center; color: black;" class="col-md6 border rounded min-vw-60">
+    <h5>{{item.commentariy}}</h5>
+    {% if item.photo != 'none' %}
+    <div>
+        <img style="width: 50%; height: 50%" class="img-thumbnail" src="../../static/img/comments_photo/{{item.photo}}">
+    </div>
+    {% endif %}
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+        {% if current_user.is_authenticated and current_user == item.user or current_user.admin%}
+        <a href="/comm_delete/place/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
+{% endfor %}
+{% endblock %}

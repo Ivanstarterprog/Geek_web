@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Интерестные места</h1>
+{% if current_user.is_authenticated %}
+    <a href="new" class="btn btn-secondary">Добавить информацию о интерестном месте</a>
+{% endif %}
+
+{% for item in places%}
+<a href="place/{{item.id}}"><div style="text-align: center;" class="col-md6 border rounded min-vw-60">
+    <h2>{{item.name}}</h2>
+    <h3>Данное место находится по адресу : {{item.adress}}</h3>
+    {% if item.photo != 'none' %}
+    <div>
+        <img style="width: 50%; height: 50%" class="img-thumbnail" src="../../static/img/places_photos/{{item.photo}}">
+    </div>
+    {% endif %}
+    {% if item.changed %}
+    <div>
+        Пост был изменён
+    </div>
+    {% endif %}
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+    {% if current_user.is_authenticated and current_user == item.user %}
+    <div>
+        <a href="/places/edit/{{ item.id }}" class="btn btn-warning">
+            Изменить
+        </a>
+        {% endif %}
+        {% if current_user.is_authenticated and (current_user == item.user or current_user.admin)%}
+        <a href="/places_delete/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
+</div>
+{% endfor %}
+{% endblock %}

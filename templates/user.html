@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="text-align: center;">Профиль</h1>
+<br>
+<div class="container-fluid border rounded min-vw-60 row">
+    <div class='col-lg-4'>
+        <img class="img-thumbnail float-left" src="../../static/img/avatars/{{user.avatar}}">
+    </div>
+    <div class="col-6-auto" style="font-size: 150%">
+            <br>
+            <p>Никнейм пользователя - {{user.name}}</p>
+            <div>О пользователе:</div>
+            <div>{{user.about}}</div>
+            <p>Аккаунт был создан {{user.created_date}}</p>
+    {% if current_user.is_authenticated and current_user == user or current_user.admin%}
+    <a href="/user_delete/{{ user.id }}" class="btn btn-danger">
+            Удалить
+    </a>
+    {% endif %}
+    </div>
+</div>
+    <div style="text-align: center;" class=" border rounded">{% if current_user.is_authenticated %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.content.label }}<br>
+            {{ form.content(class="form-control") }}<br>
+            {% for error in form.content.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        {{message}}
+        </form>
+        {% endif %}
+<div style="text-align: center; color: black; width: 100%;" class="border rounded min-vw-60">
+    <p>Комментарии</p>
+    {% for item in coms%}
+    <h5>{{item.commentariy}}</h5>
+    {% if item.photo != 'none' %}
+    <div>
+        <img style="width: 50%; height: 50%" class="img-thumbnail" src="../../static/img/comments_photo/{{item.photo}}">
+    </div>
+    {% endif %}
+    <div>
+        Автор - <a href="../../user/{{item.user.id}}">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
+    </div>
+        {% if current_user.is_authenticated and current_user == item.user or current_user.admin%}
+        <a href="/comm_delete/user/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
